@@ -1,0 +1,21 @@
+version: '3'
+services:
+  frontend:
+    build: ./hiring-hn-frontend
+    ports:
+     - "3000:3000"
+    depends_on: 
+      backend:
+        condition: service_healthy
+    links:
+      - backend
+  backend:
+    build: ./hiring-hn-backend
+    environment:
+      - OPENAI_API_KEY=${OPENAI_API_KEY}
+    ports:
+      - "5000:5000"
+    healthcheck:
+        test: ["CMD", "curl", "-f", "http://localhost:5000/getStories"]
+        interval: 20s
+        retries: 5
